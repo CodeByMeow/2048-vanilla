@@ -14,12 +14,16 @@ function setupInput() {
 }
 
 async function handleInput(e) {
+  const validKey = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+
+  if (!validKey.includes(e.key)) return setupInput();
+
   switch (e.key) {
     case "ArrowUp":
-      /* if (!canMoveUp()) {
+      if (!canMoveUp()) {
         setupInput();
         return;
-      } */
+      }
       await moveUp();
       break;
     case "ArrowDown":
@@ -55,7 +59,15 @@ async function handleInput(e) {
   const newTile = new Tile(gameBoard);
   grid.randomEmptyCell().tile = newTile;
 
-  setupInput()
+  if (!canMoveUp() && !canMoveDown() && !canMoveLeft() && !canMoveRight()) {
+    newTile.waitForTransition(true).then(() => {
+      alert("You lose");
+    })
+  } else {
+    setupInput()
+  }
+
+
 }
 
 function moveUp() {
@@ -111,16 +123,18 @@ function canMoveUp() {
 function canMoveDown() {
   return canMove(grid.cellsByColumn.map(colum => [...colum].reverse()));
 }
+
 function canMoveLeft() {
   return canMove(grid.cellsByRow);
 }
+
 function canMoveRight() {
   return canMove(grid.cellsByRow.map(row => [...row].reverse()));
 }
 
 function canMove(cells) {
   return cells.some(group => {
-    group.some((cell, index) => {
+    return group.some((cell, index) => {
       if (index === 0) return false;
       if (cell.tile == null) return false;
       const moveToCell = group[index - 1];

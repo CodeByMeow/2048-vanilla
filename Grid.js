@@ -49,6 +49,7 @@ export default class Gird {
     return this.#emptyCells[indexRandom];
   }
 
+
 }
 
 class Cell {
